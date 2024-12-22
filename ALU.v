@@ -1,20 +1,30 @@
-// Code your design here
 module ALU(
-  input[31:0] A,B,
-  input ALU_ctl,
+  input [31:0] A, B,
+  input [1:0] ALU_ctl,
   
-  output reg c_flag,
-  output [31:0] ALU_out,
-  output zero_flag
+  output reg c_flag, // Carry flag
+  output reg [31:0] ALU_out,
+  output reg zero_flag // Zero flag
 );
-  assign zero_flag= (ALU_out==0) ? 1 : 0;
-  reg[31:0] reg_out;
-  always@(A,B,ALU_ctl) begin
-    case(ALU_ctl)
-      0:{c_flag,reg_out} = A+B;   // if 0 do add
-      1:{c_flag,reg_out} = A-B;	  // if 1 do subtract
-      default: reg_out = 0;
-    endcase  
+
+  always @(A, B, ALU_ctl) begin
+    case (ALU_ctl)
+      2'b00: begin // Add
+        ALU_out = A + B;
+        c_flag = (ALU_out < A); // Carry flag (detect overflow)
+      end
+      2'b01: begin // Subtract
+        ALU_out = A - B;
+        c_flag = (A < B); // Carry flag (borrow detected)
+      end
+      default: begin
+        ALU_out = 32'b0; // Default to 0 for unsupported operations
+        c_flag = 0;
+      end
+    endcase
   end
-  assign ALU_out=reg_out;
+  
+  // Zero flag (set if ALU_out is zero)
+  assign zero_flag = (ALU_out == 0) ? 1 : 0;
+
 endmodule
