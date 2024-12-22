@@ -15,7 +15,7 @@ module ControlUnit(
       case(opcode) 
         // R-format (add, sub)
         0: begin // r-format add & sub
-          RegDst = 0; // rt
+          RegDst = 1; // rt
           Branch = 0; //No branching
           MemRead = 0; // no read op
           MemtoReg = 0; // rd is from ALU
